@@ -43,6 +43,12 @@ void SteepestCostFunction::AddResidualBlock(vector<double> observations)
 
 bool SteepestCostFunction::CostFunction(vector<double> variables, vector<double> &CostFunctionValues)
 {
+	if(variables.size()!=SizeVariables_)
+	{
+		cout<<"An Error happend in Class SteepestCostFunction::CostFunction, Variables size is NOT correct"<<endl;
+		return false;
+	}
+
 	/*
 	// debug
 	cout<<"variables : "<<variables[0]<<", "<<variables[1]<<", "<<variables[2]<<endl;

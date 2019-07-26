@@ -70,8 +70,12 @@ void SteepestOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	vector<double> derivatives;
 	bool isDerivativeGood = costFunction_->GradientFunction(VariablesPrevious_,derivatives);
 
-	// step 3 : get step length
-	// step 4 : get current variables
+	// step 3 : get alpha step length by line search method
+	//          Line search method with 0.618 method
+	alpha_stepLength_ = GetAlphaStepLength_LineSearch_0816Method(VariablesPrevious,derivatives);
+
+	// step 4 : get step length
+	// step 5 : get current variables
 	stepLengths_.clear();
 	for(int i=0;i<SizeVariables_;i++)
 	{

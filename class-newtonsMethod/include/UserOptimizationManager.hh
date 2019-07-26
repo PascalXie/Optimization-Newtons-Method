@@ -26,6 +26,10 @@ class UserOptimizationManager
 		void SetAlphaStepLength(double alpha_stepLength);
 
 	protected:
+		// line search methods
+		double GetAlphaStepLength_LineSearch_0816Method(vector<double> Variables, vector<double> DescentDirection);
+
+	protected:
 		int SizeObservations_;
 		int SizeVariables_;
 		int SizeResiduals_;

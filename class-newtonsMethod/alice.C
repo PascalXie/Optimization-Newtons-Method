@@ -28,7 +28,12 @@ int main()
 {
 	cout<<"Hello "<<endl;
 
+	// steepest descent method
+	//test3();
+
+	// Newton's method
 	test4();
+
 	//test8();
 
 	return 1;
@@ -43,10 +48,10 @@ void test3()
 
 	// set variables
 	vector<double> variables;
-	variables.push_back(1.1);
-	variables.push_back(2.1);
-	variables.push_back(3.1);
-	variables.push_back(4.1);
+	variables.push_back(1.+101);
+	variables.push_back(2.+101);
+	variables.push_back(3.-101);
+	variables.push_back(4.-101);
 	sd->SetUserInitialization(variables);
 
 	// set cost function
@@ -94,10 +99,10 @@ void test4()
 
 	// set variables
 	vector<double> variables;
-	variables.push_back(1.+0.2);
-	variables.push_back(2.+0.2);
-	variables.push_back(3.-0.2);
-	variables.push_back(4.-0.2);
+	variables.push_back(1.+101.);
+	variables.push_back(2.+101.);
+	variables.push_back(3.-101.);
+	variables.push_back(4.-101.);
 	manager->SetUserInitialization(variables);
 
 	// set cost function

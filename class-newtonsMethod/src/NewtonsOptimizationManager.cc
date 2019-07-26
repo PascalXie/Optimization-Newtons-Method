@@ -142,7 +142,17 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 		DescentDirection = -1.*JacobianMatrix_;
 	}
 
-	// step 4 : get current variables
+	// step 4 : get alpha step length by line search method
+	//          Line search method with 0.618 method
+	vector<double> DescentDirectionVector;
+	for(int i=0;i<SizeVariables_;i++)
+	{
+		DescentDirectionVector.push_back(DescentDirection(i,0));
+	}
+
+	alpha_stepLength_ = GetAlphaStepLength_LineSearch_0816Method(VariablesPrevious,DescentDirectionVector);
+
+	// step 5 : get current variables
 	MatrixXd stepLength_matrix(SizeVariables_,1);
 	stepLength_matrix = alpha_stepLength_*DescentDirection;
 

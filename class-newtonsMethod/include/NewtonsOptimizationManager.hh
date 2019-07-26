@@ -28,6 +28,10 @@ class NewtonsOptimizationManager : virtual public UserOptimizationManager
 		virtual void SetUserInitialization(vector<double> variables);
 		virtual void Iteration(vector<double> VariablesPrevious);
 
+    //public:
+	//	// line search methods
+	//	double GetAlphaStepLength_LineSearch_0816Method(vector<double> Variables, vector<double> DescentDirection);
+
     private:
 		string name_;
 
