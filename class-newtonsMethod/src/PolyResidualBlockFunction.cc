@@ -11,8 +11,7 @@ PolyResidualBlockFunction::PolyResidualBlockFunction(string name, vector<double>
     SizeResiduals_(SizeResiduals)
 {
 	observations_.clear();
-	observations_.push_back(observations[0]); // x
-	observations_.push_back(observations[1]); // y
+	observations_ = observations;
 }
 
 //-------------------------
@@ -41,12 +40,13 @@ bool PolyResidualBlockFunction::ResidualFunction(vector<double> variables, vecto
 
 	double x = observations_[0];
 	double y = observations_[1];
-	double a[3];
+	double a[4];
 	a[0] = variables[0];
 	a[1] = variables[1];
 	a[2] = variables[2];
+	a[3] = variables[3];
 
-	double residual_0 = y - (a[0] + a[1]*x + a[2]*x*x);
+	double residual_0 = (a[0] + a[1]*x + a[2]*x*x + a[3]*x*x*x) - y;
 
 	residuals.clear();
 	residuals.push_back(residual_0);
@@ -54,8 +54,9 @@ bool PolyResidualBlockFunction::ResidualFunction(vector<double> variables, vecto
 
 	/*
 	// debug
+	cout<<"Debug class PolyResidualBlockFunction::ResidualFunction"<<endl;
 	cout<<"Debug Residual : Observation "<<x<<" "<<y<<endl;
-	cout<<"Debug Residual : varialbles "<<a[0]<<" "<<a[1]<<" "<<a[2]<<", residual "<<residual_0<<endl;
+	cout<<"Debug Residual : varialbles "<<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<", residual "<<residual_0<<endl;
 	*/
 
 	return true;

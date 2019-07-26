@@ -17,135 +17,53 @@
 
 using namespace std;
 
-void test1();
-void test2();
 void test3();
 void test4();
-void test5();
-void test6();
 void test7();
 void test8();
+double observation1(double ob1);
+double observation2(double ob1);
 
 int main()
 {
 	cout<<"Hello "<<endl;
 
-	test8();
+	test4();
+	//test8();
 
 	return 1;
-}
-
-void test1()
-{
-	int residualSize = 1;
-	int varialbeSize = 3;
-	UserCostFunction* costFunction = new SteepestCostFunction("test", 2, varialbeSize, residualSize);
-
-	// observations
-	int sizeObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
-
-	for(int i=0;i<sizeObservations;i++)
-	{
-		vector<double> observation_current;
-		observation_current.push_back(observation_xs[i]);
-		observation_current.push_back(observation_ys[i]);
-		costFunction->AddResidualBlock(observation_current);
-	}
-
-	costFunction->Show();
-
-	// derivative
-	vector<double> variables;
-	variables.push_back(0);
-	variables.push_back(2);
-	variables.push_back(3);
-
-	double derivative0;
-	bool isDerivativeGood = costFunction->GetOneDerivative(0,variables,derivative0);
-
-	if(isDerivativeGood)
-	{
-		cout<<"derivative0 "<<derivative0<<endl;
-	}
-	else
-	{
-		cout<<"Error happend in Derivative "<<endl;
-	}
-
-}
-
-void test2()
-{
-	int residualSize = 1;
-	int varialbeSize = 3;
-	UserCostFunction* costFunction = new SteepestCostFunction("test", 2, varialbeSize, residualSize);
-
-	// observations
-	int sizeObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
-
-	for(int i=0;i<sizeObservations;i++)
-	{
-		vector<double> observation_current;
-		observation_current.push_back(observation_xs[i]);
-		observation_current.push_back(observation_ys[i]);
-		costFunction->AddResidualBlock(observation_current);
-	}
-
-	costFunction->Show();
-
-	for(int i=0;i<10;i++)
-	{
-		cout<<"Variables(Plan) ID "<<i<<endl;
-		double a0 = -4+i;
-		double a1 = 2;
-		double a2 = 3;
-
-		// derivative
-		vector<double> variables;
-		variables.push_back(a0);
-		variables.push_back(a1);
-		variables.push_back(a2);
-
-		vector<double> derivatives;
-		bool isDerivativeGood = costFunction->GradientFunction(variables,derivatives);
-
-		if(isDerivativeGood)
-		{
-			cout<<"derivative : "<<derivatives[0]<<", "<<derivatives[1]<<", "<<derivatives[2]<<endl;
-		}
-		else
-		{
-			cout<<"Error happend in Derivative "<<endl;
-		}
-		cout<<""<<endl;
-	}
-
 }
 
 void test3()
 {
 	int observationsSize = 2;
 	int residualSize = 1;
-	int varialbeSize = 3;
+	int varialbeSize = 4;
 	UserOptimizationManager * sd = new SteepestOptimizationManager("SteepestDecentMethod",observationsSize,varialbeSize,residualSize);
 
 	// set variables
 	vector<double> variables;
-	variables.push_back(5);
-	variables.push_back(6);
-	variables.push_back(4);
+	variables.push_back(1.1);
+	variables.push_back(2.1);
+	variables.push_back(3.1);
+	variables.push_back(4.1);
 	sd->SetUserInitialization(variables);
 
 	// set cost function
 	UserCostFunction* costFunction = new SteepestCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
 
+	// get observations
 	int LengthObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
+	double observation_xs[5];
+	double observation_ys[5];
+	for(int i=0;i<LengthObservations;i++)
+	{
+		double x = double(i)-2;
+		double y = observation2(x);
+		observation_xs[i] = x;
+		observation_ys[i] = y;
+		cout<<"Observation ID "<<i<<", x "<<observation_xs[i]<<", y "<<observation_ys[i]<<endl;
+	}
 
 	for(int i=0;i<LengthObservations;i++)
 	{
@@ -155,66 +73,50 @@ void test3()
 		costFunction->AddResidualBlock(observation_current);
 	}
 
+	//
+	cout<<" "<<endl;
+	cout<<"alice SetUserInitialization"<<endl;
 	sd->SetUserInitialization(costFunction);
 
 
 	// initialize
+	cout<<" "<<endl;
+	cout<<"Initialize "<<endl;
 	sd->Initialize();
 }
 
 void test4()
 {
+	int observationsSize = 2;
 	int residualSize = 1;
-	int varialbeSize = 3;
-	UserCostFunction* costFunction = new NewtonsCostFunction("test", 2, varialbeSize, residualSize);
+	int varialbeSize = 4;
+	UserOptimizationManager * manager = new NewtonsOptimizationManager("NewtonsMethod",observationsSize,varialbeSize,residualSize);
 
-	// observations
-	int sizeObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
-
-	for(int i=0;i<sizeObservations;i++)
-	{
-		vector<double> observation_current;
-		observation_current.push_back(observation_xs[i]);
-		observation_current.push_back(observation_ys[i]);
-		costFunction->AddResidualBlock(observation_current);
-	}
-
-	costFunction->Show();
-
-	// derivative
+	// set variables
 	vector<double> variables;
-	variables.push_back(0);
-	variables.push_back(2);
-	variables.push_back(3);
+	variables.push_back(1.+0.2);
+	variables.push_back(2.+0.2);
+	variables.push_back(3.-0.2);
+	variables.push_back(4.-0.2);
+	manager->SetUserInitialization(variables);
 
-	double derivative0;
-	bool isDerivativeGood = costFunction->GetOneDerivative(0,variables,derivative0);
+	// set cost function
+	UserCostFunction* costFunction = new NewtonsCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
 
-	if(isDerivativeGood)
+	// get observations
+	int LengthObservations = 5;
+	double observation_xs[5];
+	double observation_ys[5];
+	for(int i=0;i<LengthObservations;i++)
 	{
-		cout<<"derivative0 "<<derivative0<<endl;
+		double x = double(i)-2;
+		double y = observation2(x);
+		observation_xs[i] = x;
+		observation_ys[i] = y;
+		cout<<"Observation ID "<<i<<", x "<<observation_xs[i]<<", y "<<observation_ys[i]<<endl;
 	}
-	else
-	{
-		cout<<"Error happend in Derivative "<<endl;
-	}
 
-}
-
-void test5()
-{
-	int residualSize = 1;
-	int varialbeSize = 3;
-	UserCostFunction* costFunction = new NewtonsCostFunction("test", 2, varialbeSize, residualSize);
-
-	// observations
-	int sizeObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
-
-	for(int i=0;i<sizeObservations;i++)
+	for(int i=0;i<LengthObservations;i++)
 	{
 		vector<double> observation_current;
 		observation_current.push_back(observation_xs[i]);
@@ -222,178 +124,88 @@ void test5()
 		costFunction->AddResidualBlock(observation_current);
 	}
 
-	costFunction->Show();
+	//
+	cout<<" "<<endl;
+	cout<<"alice SetUserInitialization"<<endl;
+	manager->SetUserInitialization(costFunction);
 
-	for(int i=0;i<10;i++)
-	{
-		cout<<"Variables(Plan) ID "<<i<<endl;
-		double a0 = -4+i;
-		double a1 = 2;
-		double a2 = 3;
 
-		// derivative
-		vector<double> variables;
-		variables.push_back(a0);
-		variables.push_back(a1);
-		variables.push_back(a2);
-
-		vector<double> derivatives;
-		bool isDerivativeGood = costFunction->GradientFunction(variables,derivatives);
-
-		if(isDerivativeGood)
-		{
-			cout<<"derivative : "<<derivatives[0]<<", "<<derivatives[1]<<", "<<derivatives[2]<<endl;
-		}
-		else
-		{
-			cout<<"Error happend in Derivative "<<endl;
-		}
-		cout<<""<<endl;
-	}
-
-}
-
-void test6()
-{
-	int residualSize = 1;
-	int varialbeSize = 3;
-	UserCostFunction* costFunction = new NewtonsCostFunction("test", 2, varialbeSize, residualSize);
-
-	// observations
-	int sizeObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
-
-	for(int i=0;i<sizeObservations;i++)
-	{
-		vector<double> observation_current;
-		observation_current.push_back(observation_xs[i]);
-		observation_current.push_back(observation_ys[i]);
-		costFunction->AddResidualBlock(observation_current);
-	}
-
-	costFunction->Show();
-
-	for(int i=0;i<10;i++)
-	{
-		cout<<"Variables(Plan) ID "<<i<<endl;
-		double a0 = -4+i;
-		double a1 = 2;
-		double a2 = 3;
-
-		// derivative
-		vector<double> variables;
-		variables.push_back(a0);
-		variables.push_back(a1);
-		variables.push_back(a2);
-
-		cout<<"Variables : "<<a0<<", "<<a1<<", "<<a2<<endl;
-
-		double oneSecondDerivative = 666;
-		bool isDerivativeGood = costFunction->GetOneSecondOrderDerivative(1,2,variables,oneSecondDerivative);
-
-		if(isDerivativeGood)
-		{
-			cout<<"oneSecondDerivative : "<<oneSecondDerivative<<endl;
-		}
-		else
-		{
-			cout<<"Error happend in Derivative "<<endl;
-		}
-		cout<<""<<endl;
-	}
-
+	// initialize
+	cout<<" "<<endl;
+	cout<<"Initialize "<<endl;
+	manager->Initialize();
 }
 
 void test7()
 {
+	int observationsSize = 2;
 	int residualSize = 1;
-	int varialbeSize = 3;
-	UserCostFunction* costFunction = new NewtonsCostFunction("test", 2, varialbeSize, residualSize);
+	int varialbeSize = 4;
+	UserOptimizationManager * sp = new SteepestOptimizationManager("NewtonsMethod",observationsSize,varialbeSize,residualSize);
+	sp->SetAlphaStepLength(1e-6);
 
-	// observations
-	int sizeObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
+	// set variables
+	vector<double> variables;
+	variables.push_back(1.9);
+	variables.push_back(2.9);
+	variables.push_back(3.9);
+	variables.push_back(4.9);
+	sp->SetUserInitialization(variables);
 
-	for(int i=0;i<sizeObservations;i++)
+	// set cost function
+	UserCostFunction* costFunction = new SteepestCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
+	costFunction->SetStepLength(1e-3);
+
+	int LengthObservations = 6;
+	for(int i=0;i<LengthObservations;i++)
 	{
+		double ob1 = double(i);
+		double ob2 = observation2(ob1);
+
 		vector<double> observation_current;
-		observation_current.push_back(observation_xs[i]);
-		observation_current.push_back(observation_ys[i]);
+		observation_current.push_back(ob1);
+		observation_current.push_back(ob2);
 		costFunction->AddResidualBlock(observation_current);
 	}
 
-	costFunction->Show();
+	sp->SetUserInitialization(costFunction);
 
-	for(int i=0;i<10;i++)
-	{
-		cout<<"Variables(Plan) ID "<<i<<endl;
-		double a0 = -4+i;
-		double a1 = 2;
-		double a2 = 3;
+	//// iteration
+	//newton->Iteration(variables);
 
-		// derivative
-		vector<double> variables;
-		variables.push_back(a0);
-		variables.push_back(a1);
-		variables.push_back(a2);
-
-		cout<<"Variables : "<<a0<<", "<<a1<<", "<<a2<<endl;
-
-		vector<double> HessianMatrix;
-		bool isDerivativeGood = costFunction->HessianMatrixFunction(variables,HessianMatrix);
-
-		if(isDerivativeGood)
-		{
-			cout<<"HessianMatrix : "<<endl;
-			for(int i=0;i<3;i++)
-			{
-				int rowID = i;
-				for(int j=0;j<3;j++)
-				{
-					int columnID = j;
-					int ID = rowID*3+columnID;
-					cout<<HessianMatrix[ID]<<", ";
-				}
-				cout<<endl;
-			}
-		}
-		else
-		{
-			cout<<"Error happend in Derivative "<<endl;
-		}
-		cout<<""<<endl;
-	}
-
+	// initialize
+	sp->Initialize();
 }
 
 void test8()
 {
 	int observationsSize = 2;
 	int residualSize = 1;
-	int varialbeSize = 3;
+	int varialbeSize = 4;
 	UserOptimizationManager * newton = new NewtonsOptimizationManager("NewtonsMethod",observationsSize,varialbeSize,residualSize);
+	newton->SetAlphaStepLength(1e-2);
 
 	// set variables
 	vector<double> variables;
-	variables.push_back(5);
-	variables.push_back(6);
-	variables.push_back(4);
+	variables.push_back(1.1);
+	variables.push_back(2.1);
+	variables.push_back(3.1);
+	variables.push_back(4.1);
 	newton->SetUserInitialization(variables);
 
 	// set cost function
 	UserCostFunction* costFunction = new NewtonsCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
+	costFunction->SetStepLength(1e-2);
 
-	int LengthObservations = 5;
-	double observation_xs[5] = {0,1,2,-1,-2};
-	double observation_ys[5] = {1,6,17,2,9};
-
+	int LengthObservations = 16;
 	for(int i=0;i<LengthObservations;i++)
 	{
+		double ob1 = double(i);
+		double ob2 = observation2(ob1);
+
 		vector<double> observation_current;
-		observation_current.push_back(observation_xs[i]);
-		observation_current.push_back(observation_ys[i]);
+		observation_current.push_back(ob1);
+		observation_current.push_back(ob2);
 		costFunction->AddResidualBlock(observation_current);
 	}
 
@@ -404,4 +216,22 @@ void test8()
 
 	// initialize
 	newton->Initialize();
+}
+
+double observation1(double ob1)
+{
+	double as[3] = {1,2,3};
+	double x = ob1;
+	double y = (as[0] + as[1]*x + as[2]*x*x);
+
+	return y;
+}
+
+double observation2(double ob1)
+{
+	double as[4] = {1,2,3,4};
+	double x = ob1;
+	double y = (as[0] + as[1]*x + as[2]*x*x + as[3]*x*x*x);
+
+	return y;
 }

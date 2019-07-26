@@ -122,7 +122,7 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	for(int i=0;i<SizeVariables_;i++)
 	{
 		double lambda = eigenSolver.eigenvalues()[i];
-		if(lambda<=0) areAllEigenValuesPositive=false;
+		if(lambda<=1e-5) areAllEigenValuesPositive=false;
 	}
 
 	//step 3 : make descent direction ready
@@ -162,6 +162,13 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	cout<<"----------------------------------------"<<endl;
 	cout<<"----"<<endl;
 	cout<<"NewtonsOptimizationManager::Iteration"<<endl;
+	cout<<"Eigen values of Heesian "<<eigenSolver.eigenvalues().transpose()<<endl;
+
+	vector<double> costFunctionValues_previous;
+	vector<double> costFunctionValues_current;
+	bool isPreviousGood = costFunction_->CostFunction(VariablesPrevious_,costFunctionValues_previous);
+	bool isCurrentGood = costFunction_->CostFunction(VariablesCurrent_,costFunctionValues_current);
+	cout<<"Cost Function,  previous "<<costFunctionValues_previous[0]<<"; current "<<costFunctionValues_current[0]<<endl;
 
 	if(areAllEigenValuesPositive)
 	{
@@ -170,6 +177,12 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	else
 	{
 		cout<<"The Hessian matrix is not positive definite, the steepest descent method is going to be uesd"<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
+		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
 	}
 
 	cout<<"derivatives of current variables : "<<endl;

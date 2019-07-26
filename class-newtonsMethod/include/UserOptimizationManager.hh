@@ -23,6 +23,7 @@ class UserOptimizationManager
 
     public:
 		void Initialize();
+		void SetAlphaStepLength(double alpha_stepLength);
 
 	protected:
 		int SizeObservations_;

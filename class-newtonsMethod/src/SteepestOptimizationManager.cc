@@ -59,12 +59,12 @@ void SteepestOptimizationManager::SetUserInitialization(vector<double> variables
 
 void SteepestOptimizationManager::Iteration(vector<double> VariablesPrevious)
 {
+	//cout<<"Class SteepestOptimizationManager::Iteration"<<endl;
 	vector<double> VariablesCurrent;
 	VariablesCurrent.clear();
 
 	// step 1 : set variables
 	VariablesPrevious_ = VariablesPrevious;
-	//VariablesPrevious_ = initializationVariables_;
 
 	// step 2 : get derivatives
 	vector<double> derivatives;
@@ -88,6 +88,7 @@ void SteepestOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	// debug
 	cout<<"----------------------------------------"<<endl;
 	cout<<"----"<<endl;
+	cout<<"Class SteepestOptimizationManager::Iteration"<<endl;
 	cout<<"derivatives of current variables : "<<endl;
 	for(int i=0;i<SizeVariables_;i++)
 	{

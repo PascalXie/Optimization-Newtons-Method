@@ -23,12 +23,12 @@ class UserCostFunction
 		virtual bool GetOneDerivative(int VarialbleID, vector<double> variables, double &theDerivativeValue) =0;
 		virtual bool GetOneSecondOrderDerivative(int FirstPartialDerivativeVarialbleID, int SecondPartialDerivativeVarialbleID, vector<double> variables, double &theDerivativeValue) =0;
 
+		virtual void SetStepLength(double delta) = 0;
 		// virtual
 
     public:
 		bool GradientFunction(vector<double> variables, vector<double> &theDerivatives);
 		bool HessianMatrixFunction(vector<double> variables, vector<double> &HessianMatrix);
-		//void SetStepLength(double delta);
 
     public:
 		virtual void Show() = 0;

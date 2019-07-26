@@ -10,6 +10,7 @@ UserCostFunction::UserCostFunction(string name, int SizeObservations, int SizeVa
     SizeResiduals_(SizeResiduals)
 {
 	//cout<<"UserCostFunction "<<name_<<endl;
+	ResidualBlockFunctions_.clear();
 }
 
 //-------------------------

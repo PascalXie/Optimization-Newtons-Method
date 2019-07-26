@@ -20,8 +20,8 @@ class SteepestCostFunction : virtual public UserCostFunction
 		~SteepestCostFunction();
 	
     public:
-		void SetStepLength(double delta);
-		void Show();
+		virtual void SetStepLength(double delta);
+		virtual void Show();
 
     public:
 		virtual void AddResidualBlock(vector<double> observations);

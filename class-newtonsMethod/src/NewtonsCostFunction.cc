@@ -6,7 +6,7 @@
 NewtonsCostFunction::NewtonsCostFunction(string name, int SizeObservations, int SizeVariables, int SizeResiduals)
 :	UserCostFunction(name+"_SuperType",SizeObservations,SizeVariables,SizeResiduals),
 	name_(name),
-	delta_(0.1)
+	delta_(1e-6)
 {
 	//cout<<"NewtonsCostFunction "<<name_<<endl;
 }
@@ -33,6 +33,10 @@ void NewtonsCostFunction::AddResidualBlock(vector<double> observations)
 	UserResidualBlockFunction* res_current = new PolyResidualBlockFunction(name_residual,observations,SizeObservations_,SizeVariables_,SizeResiduals_);
 
 	ResidualBlockFunctions_.push_back(res_current);
+
+	// debug
+	cout<<"Debug class NewtonsCostFunction::AddResidualBlock"<<endl;
+	cout<<"ResidualBlockFunctions_ size "<<ResidualBlockFunctions_.size()<<endl;
 }
 
 bool NewtonsCostFunction::CostFunction(vector<double> variables, vector<double> &CostFunctionValues)

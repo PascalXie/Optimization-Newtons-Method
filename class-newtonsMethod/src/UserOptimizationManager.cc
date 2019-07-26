@@ -11,7 +11,7 @@ UserOptimizationManager::UserOptimizationManager(string name, int SizeObservatio
 	costFunction_(NULL),
 	IsInitializationCostFunctionSet_(false),
 	IsInitializationVariablesSet_(false),
-	alpha_stepLength_(0.001),
+	alpha_stepLength_(1e-3),
 	TotalNumberIterations_(0),
 	MaximumNumberIterations_(2000)
 {}
@@ -55,7 +55,7 @@ void UserOptimizationManager::Initialize()
 		cout<<"----------------------------------------"<<endl;
 		cout<<"----"<<endl;
 		cout<<"Class UserOptimizationManager::Initialize"<<endl;
-		cout<<"Iteration Loops ID "<<TotalNumberIterations_<<", error : "<<endl;
+		cout<<"Iteration Loops ID (start with 1) "<<TotalNumberIterations_<<", error : "<<endl;
 		for(int errorID=0;errorID<SizeResiduals_;errorID++)
 		{
 			cout<<"    ErrorID "<<errorID<<": error "<<errors_costFunction[errorID]<<endl;
@@ -63,4 +63,9 @@ void UserOptimizationManager::Initialize()
 		cout<<"----"<<endl;
 		cout<<"----------------------------------------"<<endl;
 	}
+}
+
+void UserOptimizationManager::SetAlphaStepLength(double alpha_stepLength)
+{
+	alpha_stepLength_ = alpha_stepLength;
 }
