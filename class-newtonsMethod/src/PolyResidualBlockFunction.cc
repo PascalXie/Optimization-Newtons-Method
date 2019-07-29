@@ -7,8 +7,7 @@ PolyResidualBlockFunction::PolyResidualBlockFunction(string name, vector<double>
 :	UserResidualBlockFunction(name+"_User"),
 	name_(name),
 	SizeObservations_(SizeObservations),
-	SizeVariables_(SizeVariables),
-    SizeResiduals_(SizeResiduals)
+	SizeVariables_(SizeVariables), SizeResiduals_(SizeResiduals)
 {
 	observations_.clear();
 	observations_ = observations;
@@ -30,33 +29,32 @@ bool PolyResidualBlockFunction::ResidualFunction(vector<double> variables, vecto
 	//
 	if(variables.size()!=SizeVariables_) return false;
 
-	// observations_[0] : x
-	// observations_[1] : y
-	// varialbles[0] : a[0]
-	// varialbles[1] : a[1]
-	// varialbles[2] : a[2]
+	// observations_[0] : distanceSquared 
+	// observations_[1] : ax , anchor location x
+	// observations_[2] : ay , anchor location y
 
-	// residual = ( y - (a[0] + a[1]*x + a[2]*x^2) )^2
+	// varialbles[0] : xx, node location x
+	// varialbles[1] : xy, node location y
 
-	double x = observations_[0];
-	double y = observations_[1];
-	double a[4];
-	a[0] = variables[0];
-	a[1] = variables[1];
-	a[2] = variables[2];
-	a[3] = variables[3];
+	// residual = (ax-xx)*(ax-xx) + (ay-xy)*(ay-xy) - distanceSquared
 
-	double residual_0 = (a[0] + a[1]*x + a[2]*x*x + a[3]*x*x*x) - y;
+	double distanceSquared = observations_[0];
+	double ax = observations_[1];
+	double ay = observations_[2];
+
+	double xx = variables[0];
+	double xy = variables[1];
+
+	double residual_0 = (ax-xx)*(ax-xx) + (ay-xy)*(ay-xy) - distanceSquared;
 
 	residuals.clear();
 	residuals.push_back(residual_0);
 
-
 	/*
 	// debug
 	cout<<"Debug class PolyResidualBlockFunction::ResidualFunction"<<endl;
-	cout<<"Debug Residual : Observation "<<x<<" "<<y<<endl;
-	cout<<"Debug Residual : varialbles "<<a[0]<<" "<<a[1]<<" "<<a[2]<<" "<<a[3]<<", residual "<<residual_0<<endl;
+	cout<<"Debug Residual : Observation "<<distanceSquared<<" "<<ax<<" "<<ay<<endl;
+	cout<<"Debug Residual : varialbles "<<xx<<" "<<xy<<", residual "<<residual_0<<endl;
 	*/
 
 	return true;

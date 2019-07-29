@@ -1,8 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
-//#include "Optimization.hh"
 #include "UserCostFunction.hh"
 #include "SteepestCostFunction.hh"
 #include "NewtonsCostFunction.hh"
@@ -17,10 +17,9 @@
 
 using namespace std;
 
+int RSSI();
 void test3();
 void test4();
-void test7();
-void test8();
 double observation1(double ob1);
 double observation2(double ob1);
 
@@ -32,9 +31,98 @@ int main()
 	//test3();
 
 	// Newton's method
-	test4();
+	//test4();
 
-	//test8();
+	// RSSI
+	int isRSSIGood = RSSI();
+
+	return 1;
+}
+
+int RSSI()
+{
+	string filename = "../observations.txt";
+	ifstream file(filename.c_str());
+
+	if(file.fail())
+	{
+		cout<<"Can not find the file \" "<<filename<<" \""<<endl;
+		return 0;
+	}
+
+	int AnchorID = 0;
+	int NodeID = 0;
+	double distanceSquared = 0;
+	double ax = 0; 
+	double ay = 0; 
+	double xx = 0;
+	double xy = 0;
+
+	vector<int> AnchorIDs;
+	vector<int> NodeIDs;
+	vector<double> distancesSquared;
+	vector<double> axs, ays, xxs, xys;
+
+	while(!file.eof())
+	{
+		file>>AnchorID>>ax>>ay>>NodeID>>xx>>xy>>distanceSquared;
+
+		if(file.eof()) break;
+
+		cout<<"Distance squared "<<distanceSquared<<": Anchor ID "<<AnchorID<<", loc "<<ax<<", "<<ay<<"; Node ID "<<NodeID<<", loc "<<xx<<", "<<xy<<endl;
+
+		AnchorIDs.push_back(AnchorID);
+		NodeIDs.push_back(NodeID);
+		distancesSquared.push_back(distanceSquared);
+		axs.push_back(ax);
+		ays.push_back(ay);
+		xxs.push_back(xx);
+		xys.push_back(xy);
+	}
+
+	file.close();
+
+	//
+	// Optimization 
+	//
+	int observationsSize = 3;
+	int residualSize = 1;
+	int varialbeSize = 2;
+
+	UserOptimizationManager * manager = new NewtonsOptimizationManager("NewtonsMethod",observationsSize,varialbeSize,residualSize);
+
+	// set variables
+	vector<double> variables;
+	variables.push_back(0.);
+	variables.push_back(0.);
+	manager->SetUserInitialization(variables);
+
+	// set cost function
+	UserCostFunction* costFunction = new NewtonsCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
+
+	// get observations
+	for(int i=0;i<AnchorIDs.size();i++)
+	{
+		vector<double> observation_current;
+		observation_current.push_back(distancesSquared[i]);
+		observation_current.push_back(axs[i]);
+		observation_current.push_back(ays[i]);
+		costFunction->AddResidualBlock(observation_current);
+	}
+
+	//
+	cout<<" "<<endl;
+	cout<<"alice SetUserInitialization"<<endl;
+	manager->SetUserInitialization(costFunction);
+
+	//
+	double UserReferencedLength = 70.;
+	manager->SetUserReferencedLength(UserReferencedLength);
+
+	// initialize
+	cout<<" "<<endl;
+	cout<<"Initialize "<<endl;
+	manager->Initialize();
 
 	return 1;
 }
@@ -139,88 +227,6 @@ void test4()
 	cout<<" "<<endl;
 	cout<<"Initialize "<<endl;
 	manager->Initialize();
-}
-
-void test7()
-{
-	int observationsSize = 2;
-	int residualSize = 1;
-	int varialbeSize = 4;
-	UserOptimizationManager * sp = new SteepestOptimizationManager("NewtonsMethod",observationsSize,varialbeSize,residualSize);
-	sp->SetAlphaStepLength(1e-6);
-
-	// set variables
-	vector<double> variables;
-	variables.push_back(1.9);
-	variables.push_back(2.9);
-	variables.push_back(3.9);
-	variables.push_back(4.9);
-	sp->SetUserInitialization(variables);
-
-	// set cost function
-	UserCostFunction* costFunction = new SteepestCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
-	costFunction->SetStepLength(1e-3);
-
-	int LengthObservations = 6;
-	for(int i=0;i<LengthObservations;i++)
-	{
-		double ob1 = double(i);
-		double ob2 = observation2(ob1);
-
-		vector<double> observation_current;
-		observation_current.push_back(ob1);
-		observation_current.push_back(ob2);
-		costFunction->AddResidualBlock(observation_current);
-	}
-
-	sp->SetUserInitialization(costFunction);
-
-	//// iteration
-	//newton->Iteration(variables);
-
-	// initialize
-	sp->Initialize();
-}
-
-void test8()
-{
-	int observationsSize = 2;
-	int residualSize = 1;
-	int varialbeSize = 4;
-	UserOptimizationManager * newton = new NewtonsOptimizationManager("NewtonsMethod",observationsSize,varialbeSize,residualSize);
-	newton->SetAlphaStepLength(1e-2);
-
-	// set variables
-	vector<double> variables;
-	variables.push_back(1.1);
-	variables.push_back(2.1);
-	variables.push_back(3.1);
-	variables.push_back(4.1);
-	newton->SetUserInitialization(variables);
-
-	// set cost function
-	UserCostFunction* costFunction = new NewtonsCostFunction("costFunction",observationsSize,varialbeSize,residualSize);
-	costFunction->SetStepLength(1e-2);
-
-	int LengthObservations = 16;
-	for(int i=0;i<LengthObservations;i++)
-	{
-		double ob1 = double(i);
-		double ob2 = observation2(ob1);
-
-		vector<double> observation_current;
-		observation_current.push_back(ob1);
-		observation_current.push_back(ob2);
-		costFunction->AddResidualBlock(observation_current);
-	}
-
-	newton->SetUserInitialization(costFunction);
-
-	//// iteration
-	//newton->Iteration(variables);
-
-	// initialize
-	newton->Initialize();
 }
 
 double observation1(double ob1)

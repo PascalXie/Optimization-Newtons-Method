@@ -24,6 +24,8 @@ class UserOptimizationManager
     public:
 		void Initialize();
 		void SetAlphaStepLength(double alpha_stepLength);
+		// for step length computing
+		void SetUserReferencedLength(double UserReferencedLength);
 
 	protected:
 		// line search methods
@@ -48,6 +50,9 @@ class UserOptimizationManager
 
 		int TotalNumberIterations_;
 		int MaximumNumberIterations_;
+
+		// for step length computing
+		double UserReferencedLength_;
 
 
     private:

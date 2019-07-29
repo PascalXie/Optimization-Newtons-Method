@@ -11,9 +11,10 @@ UserOptimizationManager::UserOptimizationManager(string name, int SizeObservatio
 	costFunction_(NULL),
 	IsInitializationCostFunctionSet_(false),
 	IsInitializationVariablesSet_(false),
-	alpha_stepLength_(1e-3),
+	alpha_stepLength_(1e-1),
 	TotalNumberIterations_(0),
-	MaximumNumberIterations_(1e4)
+	MaximumNumberIterations_(1e4),
+	UserReferencedLength_(-1)
 {}
 
 //-------------------------
@@ -76,7 +77,7 @@ void UserOptimizationManager::SetAlphaStepLength(double alpha_stepLength)
 }
 
 //-------------------------
-// Protected 
+// Protected : Step length computing
 //-------------------------
 double UserOptimizationManager::GetAlphaStepLength_LineSearch_0816Method(vector<double> Variables, vector<double> DescentDirection)
 {
@@ -138,8 +139,10 @@ double UserOptimizationManager::GetAlphaStepLength_LineSearch_0816Method(vector<
 			alpha_lower = alpha_lower_temp;
 		}
 
+		/*
 		// debug
 		cout<<"Debug UserOptimizationManager::GetAlphaStepLength_LineSearch_0816Method : alpha_lower "<<alpha_lower<<", alpha_upper "<<alpha_upper<<endl;
+		*/
 
 		// iteration over
 		if(alpha_upper-alpha_lower<0.01) break;
@@ -148,4 +151,9 @@ double UserOptimizationManager::GetAlphaStepLength_LineSearch_0816Method(vector<
 	double alpha = (alpha_upper+alpha_lower)/2.;
 
 	return alpha;
+}
+
+void UserOptimizationManager::SetUserReferencedLength(double UserReferencedLength)
+{
+	UserReferencedLength_ = UserReferencedLength;
 }

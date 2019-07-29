@@ -128,7 +128,7 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	//step 3 : make descent direction ready
 	MatrixXd DescentDirection(SizeVariables_,1);
 
-	if(areAllEigenValuesPositive)
+	if(areAllEigenValuesPositive) 
 	{
 		// The Hessian matrix is positive definite, the Newton's method is going to be uesd
 		// get inverse matrix of Hessian
@@ -144,6 +144,22 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 
 	// step 4 : get alpha step length by line search method
 	//          Line search method with 0.618 method
+	// step 4.1 : decrease the descent direction if the norm of it is too large
+	if(UserReferencedLength_>0)
+	{
+		double norm_current = DescentDirection.norm();
+		if(norm_current>UserReferencedLength_)
+		{
+			// debug
+			//cout<<DescentDirection.transpose()<<endl;
+			//cout<<DescentDirection/norm_current<<endl;
+			//cout<<DescentDirection/norm_current*UserReferencedLength_<<endl;
+			DescentDirection = DescentDirection/norm_current*UserReferencedLength_;
+		}
+	}
+
+
+	// step 4.2 : compute step length
 	vector<double> DescentDirectionVector;
 	for(int i=0;i<SizeVariables_;i++)
 	{
@@ -172,7 +188,6 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	cout<<"----------------------------------------"<<endl;
 	cout<<"----"<<endl;
 	cout<<"NewtonsOptimizationManager::Iteration"<<endl;
-	cout<<"Eigen values of Heesian "<<eigenSolver.eigenvalues().transpose()<<endl;
 
 	vector<double> costFunctionValues_previous;
 	vector<double> costFunctionValues_current;
@@ -180,6 +195,7 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	bool isCurrentGood = costFunction_->CostFunction(VariablesCurrent_,costFunctionValues_current);
 	cout<<"Cost Function,  previous "<<costFunctionValues_previous[0]<<"; current "<<costFunctionValues_current[0]<<endl;
 
+	cout<<"Eigen values of Heesian "<<eigenSolver.eigenvalues().transpose()<<endl;
 	if(areAllEigenValuesPositive)
 	{
 		cout<<"The Hessian matrix is positive definite, the Newton's method is going to be uesd"<<endl;
@@ -187,14 +203,9 @@ void NewtonsOptimizationManager::Iteration(vector<double> VariablesPrevious)
 	else
 	{
 		cout<<"The Hessian matrix is not positive definite, the steepest descent method is going to be uesd"<<endl;
-		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
-		cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<endl;
 	}
 
+	cout<<"Step Length computing : alpha_stepLength_ "<<alpha_stepLength_<<endl;
 	cout<<"derivatives of current variables : "<<endl;
 	for(int i=0;i<SizeVariables_;i++)
 	{
